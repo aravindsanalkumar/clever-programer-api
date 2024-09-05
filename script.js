@@ -39,9 +39,47 @@ const superHero = (id,name) => {
         .then(response => response.json())
         .then(json =>{
             console.log(json);
-            superHeroDiv.innerHTML =  `<img src="${json.image.url}" alt="not working" height=300 width=300>`
+            const name = `<h2>${json.name}</h2>`;
+            const stats = getStatsHTML(json);
+            superHeroDiv.innerHTML =  `
+            ${name}
+            <img src="${json.image.url}" alt="not working" height=300 width=300>
+            ${stats}`;
         })
 }
+
+const getStatsHTML = (character) => {
+   console.log(Object.keys(character.powerstats));
+   const stats = Object.keys(character.powerstats).map(stat => {
+       return `<p>${stat}:${character.powerstats[stat]}</p>`
+   });
+   console.log(stats);
+   return stats;
+}
+
+
+const searchBtn = document.getElementById('searchBtn');
+
+
+const searchSuperHero = () =>{
+    const searchInput = document.getElementById('searchInput').value;
+    console.log(searchInput)
+    fetch(`${BASE_URL}search/${searchInput}`)
+        .then(response => response.json())
+        .then(json =>{
+            console.log(json);
+            const hero = json.results[0];
+            const name = `<h2>${json.results[0].name}</h2>`;
+            const stats = getStatsHTML(json.results[0]);
+
+            superHeroDiv.innerHTML =  `
+            ${name}
+            <img src="${hero.image.url}" alt="not working" height=300 width=300>
+            ${stats}`;
+        })
+}
+
+searchBtn.onclick = () =>searchSuperHero();
 
 newHeroBtn.onclick = () => superHero(getRandomNumber());
 
